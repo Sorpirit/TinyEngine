@@ -4,7 +4,6 @@
 #include <FileSystem/RootHandle.h>
 #include "ParameterBuilder.h"
 
-
 enum ShaderType
 {
 	Vertex = GL_VERTEX_SHADER,
@@ -15,26 +14,26 @@ enum ShaderType
 
 struct Shader
 {
-	EngineLibrary::FileSystem::PathHandle Handle;
+	const EngineLibrary::FileSystem::PathHandle Handle;
 	const ShaderType Type;
 };
 
 class ShaderProgram
 {
 public:
-	ShaderProgram(Shader vs, Shader ps);
+	ShaderProgram(const Shader& vs, const Shader& ps);
 	~ShaderProgram();
 
 	void Compile();
-	void Attach();
+	void Attach() const { glUseProgram(_programIndex); }
 
-	ParameterBuilder Build() { return ParameterBuilder(this); }
-	unsigned int GetIndex() { return _programIndex; }
+	ParameterBuilder Build() const { return ParameterBuilder(this); }
+	unsigned int GetIndex() const { return _programIndex; }
 
 private:
-	Shader _vs;
+	const Shader _vs;
 	unsigned int _vsIndex = -1;
-	Shader _ps;
+	const Shader _ps;
 	unsigned int _psIndex = -1;
 
 	unsigned int _programIndex = -1;

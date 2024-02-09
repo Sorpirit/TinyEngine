@@ -3,7 +3,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-ParameterBuilder::ParameterBuilder(ShaderProgram* program) : _program(program)
+ParameterBuilder::ParameterBuilder(const ShaderProgram* program) : _program(program)
 {
 	_program->Attach();
 }

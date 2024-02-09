@@ -10,7 +10,7 @@ public:
 	GeometryDraw();
 	~GeometryDraw();
 	void Init();
-	void Draw(const CameraSettings& camera, const Mesh& mesh);
+	void Draw(const glm::mat4& modeViewProjection, const Mesh& mesh);
 
 private:
 	ShaderProgram _program;

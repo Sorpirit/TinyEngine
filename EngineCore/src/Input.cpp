@@ -4,24 +4,33 @@ namespace EngineCore
 {
     Input* Input::instance_ = nullptr;
     
-    Input::Input(GLFWwindow* window)
+    Input::Input(GLFWwindow* window, int screenWidth, int screenHeight) : _window(window), _screenWidth(screenWidth), _screenHeight(screenHeight)
     {
         instance_ = this;
-
-        _window = window;
         
-        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+        glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
         {
             instance_->KeyCallback(key, scancode, action, mods);
         });
 
-        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos)
+        glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos)
         {
             instance_->MouseCallback(xpos, ypos);
         });
 
-        glfwSetCursorPos(window, 1024 / 2, 768 / 2);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetScrollCallback(_window, [](GLFWwindow* window, double xoffset, double yoffset)
+        {
+            instance_->ScrollCallback(xoffset, yoffset);
+        });
+
+        glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
+        {
+            instance_->MouseButtonCallback(button, action, mods);
+        });
+
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        _mousePosition = glm::vec2(xpos, ypos);
     }
 
     void Input::KeyCallback(int key, int scancode, int action, int mode)
@@ -54,6 +63,22 @@ namespace EngineCore
         _scrollOffset = yoffset;
     }
 
+    void Input::MouseButtonCallback(int button, int action, int mods)
+    {
+        if (button >= 0 && button < 8)
+        {
+            switch (action)
+            {
+            case GLFW_PRESS:
+                _mouseButtons[button] = KeyState_Pressed;
+                break;
+            case GLFW_RELEASE:
+                _mouseButtons[button] = KeyState_Released;
+                break;
+            }
+        }
+    }
+
     void Input::ProcessInput()
     {
         for (auto& _key : _keys)
@@ -65,6 +90,18 @@ namespace EngineCore
             else if (_key == KeyState_Released)
             {
                 _key = KeyState_None;
+            }
+        }
+
+        for (auto& _button : _mouseButtons)
+        {
+            if (_button == KeyState_Pressed)
+            {
+                _button = KeyState_Held;
+            }
+            else if (_button == KeyState_Released)
+            {
+                _button = KeyState_None;
             }
         }
 
@@ -93,10 +130,32 @@ namespace EngineCore
         return _keys[key];
     }
 
+    bool Input::IsMouseButtonPressed(int button) const
+    {
+        return _mouseButtons[button] == KeyState_Pressed;
+    }
+
+    bool Input::IsMouseButtonHeld(int button) const
+    {
+        return _mouseButtons[button] == KeyState_Held;
+    }
+
+    bool Input::IsMouseButtonReleased(int button) const
+    {
+        return _mouseButtons[button] == KeyState_Released;
+    }
+
+    KeyState Input::GetMouseButtonState(int button) const
+    {
+        return _mouseButtons[button];
+    }
+
     void Input::LockCursor(bool lock) const
     {
         if(lock)
         {
+            //_mousePosition = glm::vec2(_screenWidth / 2, _screenHeight / 2);
+            //glfwSetCursorPos(_window, _mousePosition.x, _mousePosition.y);
             glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
         else

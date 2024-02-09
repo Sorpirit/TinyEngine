@@ -18,13 +18,14 @@ namespace EngineCore::Entities
         _rotationEurler = glm::vec3(0, glm::radians(-90.0f), 0);
         _rotation = glm::quat(_rotationEurler);
         
-        _forward = glm::vec3(0, 0, -1.0f);
-        _up = glm::vec3(0, 1.0f, 0);
+        const glm::vec3 forward = glm::vec3(0, 0, -1.0f);
+        const glm::vec3 up = glm::vec3(0, 1.0f, 0);
 
-        _cameraSettings.view = glm::lookAt(_position, _position + _forward, _up);
+        _cameraSettings.view = glm::lookAt(_position, _position + forward, up);
         _cameraSettings.projection = glm::perspective(glm::radians(90.0f), 1.0f, .05f, 100.0f);
-        _cameraSettings.viewProjection = _cameraSettings.projection * _cameraSettings.view ;
         _render->SetMainCameraParams(_cameraSettings);
+
+        _input->LockCursor(true);
     }
 
     void FloatingCameraEntity::Update(const FrameInfo& frameInfo)
@@ -39,61 +40,52 @@ namespace EngineCore::Entities
 
         if(_input->IsKeyReleased(GLFW_KEY_ESCAPE))
             _input->LockCursor(false);
+
+        if (_input->IsMouseButtonPressed(0))
+            _input->LockCursor(true);
         
         auto mouseDelta = _input->GetScaledDeltaMousePosition();
-        _rotationEurler.x += -mouseDelta.y * frameInfo.DeltaTime;
-        _rotationEurler.y += -mouseDelta.x * frameInfo.DeltaTime;
+        _rotationEurler.x += glm::clamp(mouseDelta.y, -clampMouseDelta, clampMouseDelta) * _rotationSpeed * frameInfo.DeltaTime;
+        _rotationEurler.y += -glm::clamp(mouseDelta.x, -clampMouseDelta, clampMouseDelta) * _rotationSpeed * frameInfo.DeltaTime;
 
-        if(_rotation.x > glm::radians(89.0f))
-            _rotationEurler.x = glm::radians(89.0f);
-        if(_rotation.x < glm::radians(-89.0f))
-            _rotationEurler.x = glm::radians(-89.0f);
-
-
+        _rotationEurler.x = glm::clamp(_rotationEurler.x, -75.0f, 75.0f);
         _rotation = glm::quat(_rotationEurler);
         _rotation = normalize(_rotation);
-        auto rotationMatrix = mat3_cast(_rotation);
-        
-        /*_forward.x = cos(_rotationEurler.y) * cos(_rotationEurler.x);
-        _forward.y = sin(_rotationEurler.x);
-        _forward.z = sin(_rotationEurler.y) * cos(_rotationEurler.x);
-        _forward = glm::normalize(_forward);*/
+       
+        //translation
 
-        _forward = rotationMatrix * glm::vec3(0, 0, 1.0f);
-        _up = rotationMatrix * glm::vec3(0, 1.0f, 0);
-        const auto right = rotationMatrix * glm::vec3(1.0f, 0.0f, 0);
+        const glm::vec3 forward = _rotation * glm::vec3(0, 0, -1.0f);
+        const glm::vec3 up = _rotation * glm::vec3(0, 1.0f, 0);
+        const glm::vec3 right = _rotation * glm::vec3(1.0f, 0.0f, 0);
 
         const float speed = _input->IsKeyHeld(GLFW_KEY_LEFT_SHIFT) ? _shiftSpeed : _speed;
         const float scaledSpeed = speed * frameInfo.DeltaTime;
 
-        //translation
-        
         if(_input->IsKeyHeld(GLFW_KEY_W))
-            _position += _forward * scaledSpeed;
+            _position += forward * scaledSpeed;
 
         if(_input->IsKeyHeld(GLFW_KEY_S))
-            _position += -_forward * scaledSpeed;
+            _position += -forward * scaledSpeed;
 
         if(_input->IsKeyHeld(GLFW_KEY_D))
-            _position += -right * scaledSpeed;
-
-        if(_input->IsKeyHeld(GLFW_KEY_A))
             _position += right * scaledSpeed;
 
+        if(_input->IsKeyHeld(GLFW_KEY_A))
+            _position += -right * scaledSpeed;
+
         if(_input->IsKeyHeld(GLFW_KEY_SPACE))
-            _position += _up * scaledSpeed;
+            _position += up * scaledSpeed;
 
         if(_input->IsKeyHeld(GLFW_KEY_LEFT_CONTROL))
-            _position += -_up * scaledSpeed;
+            _position += -up * scaledSpeed;
         
-        _cameraSettings.view = glm::lookAt(_position, _position + _forward, _up);
-        _cameraSettings.viewProjection = _cameraSettings.projection * _cameraSettings.view;
+        _cameraSettings.view = glm::lookAt(_position, _position + forward, up);
         _render->SetMainCameraParams(_cameraSettings);
     }
 
-    void FloatingCameraEntity::SetParameters(int screenWidth, int screenHeight, float fov)
+    void FloatingCameraEntity::SetParameters(float fov, float near, float far)
     {
-        const auto projection = glm::perspective(glm::radians(fov), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), .05f, 100.0f);
+        const auto projection = glm::perspective(glm::radians(fov), static_cast<float>(_render->GetScreenWidth()) / static_cast<float>(_render->GetScreenHeight()), near, far);
         _cameraSettings.projection = projection;
     }
 }

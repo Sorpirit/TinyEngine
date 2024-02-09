@@ -18,7 +18,6 @@ namespace EngineCore
 
 	void EngineBuilder::SetWindowSize(int width, int height)
 	{
-
 		setup.ScreenWidth = width;
 		setup.ScreenHeight = height;
 	}

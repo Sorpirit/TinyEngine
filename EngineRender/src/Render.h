@@ -15,8 +15,11 @@ namespace EngineRender
 	{
 
 	public:
-		Render(int ScreenWidth, int ScreenHeight, const char* ApplicationName);
+		Render(int screenWidth, int screenHeight, const char* applicationName);
 		~Render();
+
+		int GetScreenWidth() const { return _screenWidth; }
+		int GetScreenHeight() const { return _screenHeight; }
 
 		void Draw(const FrameInfo& frameInfo);
 		void Present();
@@ -25,13 +28,15 @@ namespace EngineRender
 
 		void SetMainCameraParams(const CameraSettings& settings);
 	private:
-		ScreenQuad Basics;
-		GeometryDraw GeometryDrawJob;
+
+		int _screenWidth;
+		int _screenHeight;
+
+		ScreenQuad _testingQuad;
+		GeometryDraw _geometryDrawPass;
 		std::unique_ptr<Mesh> _testMesh;
-		CameraSettings camera;
+		CameraSettings _camera;
 		std::unique_ptr<vector<glm::mat4>> _instances;
-		float lastFrame;
-		float deltaTime;
 	};
 }
 

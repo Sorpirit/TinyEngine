@@ -20,7 +20,7 @@ namespace EngineCore
 
         _sceneSystem = new SceneSystem(this);
         _render = new EngineRender::Render(setup.ScreenWidth, setup.ScreenHeight, setup.ApplicationName);
-        _input = new Input(_render->GLWindow);
+        _input = new Input(_render->GLWindow, setup.ScreenWidth, setup.ScreenHeight);
     }
 
     void TinyEngineRT::Run()

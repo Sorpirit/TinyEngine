@@ -26,10 +26,10 @@ void Texture::Load()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
 	int width, height, nrChannels;
-	std::filesystem::path path = _handle.GetFullPath();
-	std::string pathStr = path.string();
+	const std::filesystem::path path = _handle.GetFullPath();
+	const std::string pathStr = path.string();
 
-	unsigned int format = _containsAlpha ? GL_RGBA : GL_RGB;
+	const unsigned int format = _containsAlpha ? GL_RGBA : GL_RGB;
 
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(pathStr.c_str(), &width, &height, &nrChannels, 0);
@@ -46,8 +46,8 @@ void Texture::Load()
 	stbi_image_free(data);
 }
 
-void Texture::Attach(int index)
+void Texture::Attach(int offset) const
 {
-	glActiveTexture(GL_TEXTURE0 + index);
+	glActiveTexture(GL_TEXTURE0 + offset);
 	glBindTexture(GL_TEXTURE_2D, _glIndex);
 }

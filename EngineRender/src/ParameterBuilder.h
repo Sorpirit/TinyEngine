@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "Texture.h"
 #include <glm/glm.hpp>
+#include "Texture.h"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ class ShaderProgram;
 class ParameterBuilder
 {
 public:
-	ParameterBuilder(ShaderProgram* program);
+	ParameterBuilder(const ShaderProgram* program);
 
 	void AddParameter(string name, float x);
 	void AddParameter(string name, float x, float y);
@@ -32,7 +32,7 @@ public:
 	void AddTexture(string name, Texture& texture);
 
 private:
-	ShaderProgram* _program;
+	const ShaderProgram* _program;
 	int _textureCounter;
 };
 

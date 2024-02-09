@@ -1,7 +1,6 @@
 #include "GeometryDraw.h"
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include "ShaderProgram.h"
 #include "FileSystem/EngineContent.h"
@@ -39,13 +38,13 @@ void GeometryDraw::Init()
 	_program.Compile();
 }
 
-void GeometryDraw::Draw(const CameraSettings& camera, const Mesh& mesh)
+void GeometryDraw::Draw(const glm::mat4& modeViewProjection, const Mesh& mesh)
 {
 	auto paramBuilder = _program.Build();
 	paramBuilder.AddTexture("simpleTexture", _simpleTex);
 	paramBuilder.AddTexture("emojiTexture", _emojiTex);
 
-	paramBuilder.AddParameter("ViewProjection", camera.viewProjection);
+	paramBuilder.AddParameter("ViewProjection", modeViewProjection);
 
 	mesh.Attach();
 

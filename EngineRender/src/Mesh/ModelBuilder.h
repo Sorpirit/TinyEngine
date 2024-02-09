@@ -23,7 +23,7 @@ public:
 		_vertexArray->push_back(v2);
 		_vertexArray->push_back(v3);
 
-		unsigned int size = _indexArray->size();
+		const unsigned int size = _indexArray->size();
 		_indexArray->push_back(size);
 		_indexArray->push_back(size + 1);
 		_indexArray->push_back(size + 2);
@@ -47,7 +47,7 @@ public:
 		_indexArray->push_back(size + 3);
 	}
 	
-	void UpdateModelGPU()
+	void SubmitModel()
 	{
 		glGenVertexArrays(1, &_VAO);
 		glGenBuffers(1, &_VBO);

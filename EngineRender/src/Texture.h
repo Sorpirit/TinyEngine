@@ -2,7 +2,6 @@
 
 #include "FileSystem/RootHandle.h"
 
-
 class Texture
 {
 public:
@@ -10,8 +9,8 @@ public:
 	~Texture();
 
 	void Load();
-	void Attach(int index = 0);
-	unsigned int GetIndex() { return _glIndex; }
+	void Attach(int offset = 0) const;
+	unsigned int GetIndex() const { return _glIndex; }
 
 private:
 	EngineLibrary::FileSystem::PathHandle _handle;

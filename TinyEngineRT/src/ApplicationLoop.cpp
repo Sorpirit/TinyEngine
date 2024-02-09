@@ -1,8 +1,3 @@
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-
 #include "EngineBuilder.h"
 #include "Entities/FloatingCameraEntity.h"
 
@@ -21,10 +16,8 @@ int main(int argc, char** argv)
     auto scene = engine->GetSceneSystem();
     auto camera = new EngineCore::Entities::FloatingCameraEntity();
     scene->AddEntity(camera);
-    camera->SetParameters(SCREEN_WIDTH, SCREEN_HEIGHT, 90.0f);
-    //camera->SetTransform()
+    camera->SetParameters(90.0f, 0.05f, 100.0f);
 
-    
     engine->Run();
     engine->Shutdown();
 
