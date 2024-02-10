@@ -14,7 +14,6 @@ namespace EngineRender::Mesh
         static glm::vec3 Transform(glm::mat4 transform, glm::vec3 position)
         {
             auto result = transform * glm::vec4(position, 1.0f);
-            result /= result.w;
             return glm::vec3(result.x, result.y, result.z);
         }
 

@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\LightDraw.h" />
     <ClInclude Include="src\DebugDraw.h" />
     <ClInclude Include="src\Mesh\Mesh.h" />
     <ClInclude Include="src\Mesh\ModelBuilder.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="src\VertexStream\VertexStream.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\LightDraw.cpp" />
     <ClCompile Include="src\CameraSettings.h" />
     <ClCompile Include="src\DebugDraw.cpp" />
     <ClCompile Include="src\ParameterBuilder.cpp" />

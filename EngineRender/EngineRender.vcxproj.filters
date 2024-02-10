@@ -30,16 +30,25 @@
     <ClInclude Include="src\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Mesh\ModelBuilder.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\VertexStream\VertexStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GeometryDraw.h">
+    <ClInclude Include="src\Mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Mesh\Mesh.h">
+    <ClInclude Include="src\DebugDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\ModelBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexStream\TextureVertexStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightDraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,10 +71,13 @@
     <ClCompile Include="src\VertexStream\ColoredVertexStream.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GeometryDraw.cpp">
+    <ClCompile Include="src\CameraSettings.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CameraSettings.h">
+    <ClCompile Include="src\DebugDraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LightDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

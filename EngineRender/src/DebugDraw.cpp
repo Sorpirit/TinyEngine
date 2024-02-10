@@ -4,10 +4,24 @@
 
 #include "ShaderProgram.h"
 #include "FileSystem/EngineContent.h"
+#include "ParameterBuilder.h"
 
 namespace EngineRender
 {
-    
+    static void DrawModel(const glm::mat4& viewProjection, ParameterBuilder& paramBuilder, const Mesh::ModelBuilder<VertexStream::ColoredVertex>& model)
+    {
+        model.Attach();
+
+        const auto instance = model.GetInstances().get();
+        const unsigned int modelSize = model.GetDrawSize();
+
+        for (const auto& modelTransform : *instance)
+        {
+            paramBuilder.AddParameter("ViewProjection", viewProjection * modelTransform);
+            glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
+        }
+    }
+
     static ShaderProgram InitProgram()
     {
         Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredVertex.vs"), Vertex };
@@ -17,33 +31,46 @@ namespace EngineRender
 
     DebugDraw::DebugDraw() :
         _program(InitProgram()),
-        _globalDebugDraw(std::make_unique<Mesh::ModelBuilder<VertexStream::ColoredVertex>>(1000, new VertexStream::ColoredVertexStream()))
+        _globalDebugDraw(std::make_unique<Mesh::ModelBuilder<VertexStream::ColoredVertex>>(100, new VertexStream::ColoredVertexStream())),
+        _debugDraws(std::make_unique<std::vector<Mesh::ModelBuilder<VertexStream::ColoredVertex>*>>())
     {
 	
     }
 
     DebugDraw::~DebugDraw()
     {
+        for (auto debugDraw : *_debugDraws)
+        {
+            delete debugDraw;
+        }
     }
 
-    void DebugDraw::Init()
+    void DebugDraw::Init(const LightDraw& light)
     {
         _program.Compile();
+        _lightDraw = &light;
     }
 
     void DebugDraw::Draw(const glm::mat4& viewProjection)
     {
         auto paramBuilder = _program.Build();
-        _globalDebugDraw->Attach();
 
-        const auto instance = _globalDebugDraw->GetInstances().get();
-        const unsigned int modelSize = _globalDebugDraw->GetDrawSize();
+        paramBuilder.AddParameter("LightColor", _lightDraw->GetLightColor());
+        paramBuilder.AddParameter("LightPosition", _lightDraw->GetLightPosition());
 
-        for (const auto& modelTransform : *instance)
+        DrawModel(viewProjection, paramBuilder, *_globalDebugDraw);
+
+        for (const auto debugDraw : *_debugDraws)
         {
-            paramBuilder.AddParameter("ViewProjection", viewProjection * modelTransform);
-            glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
+            DrawModel(viewProjection, paramBuilder, *debugDraw);
         }
+    }
+
+    Mesh::ModelBuilder<VertexStream::ColoredVertex>* DebugDraw::AllocateLocal(int prealocateVertecies) const
+    {
+        auto result = new Mesh::ModelBuilder<VertexStream::ColoredVertex> (prealocateVertecies, new VertexStream::ColoredVertexStream());
+        _debugDraws->push_back(result);
+        return result;
     }
 
 }

@@ -8,6 +8,7 @@
 #include "ScreenQuad.h"
 #include "DebugDraw.h"
 #include "FrameInfo.h"
+#include "LightDraw.h"
 
 namespace EngineRender
 {
@@ -29,6 +30,8 @@ namespace EngineRender
 		void SetMainCameraParams(const CameraSettings& settings);
 
 		const DebugDraw& GetDebugDraw() const { return _debugDrawPass; }
+		LightDraw& GetLightDraw() { return _lightDrawPass; }
+	
 	private:
 
 		int _screenWidth;
@@ -36,6 +39,7 @@ namespace EngineRender
 
 		ScreenQuad _testingQuad;
 		DebugDraw _debugDrawPass;
+		LightDraw _lightDrawPass;
 		CameraSettings _camera;
 	};
 }
