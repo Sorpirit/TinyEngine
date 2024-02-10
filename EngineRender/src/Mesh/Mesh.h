@@ -1,7 +1,11 @@
 #pragma once
-class Mesh
+
+namespace EngineRender::Mesh
 {
-public:
-	virtual void Attach() const = 0;
-	virtual unsigned int GetDrawSize() const = 0;
-};
+    class Mesh
+    {
+    public:
+        virtual void Attach() const = 0;
+        virtual unsigned int GetDrawSize() const = 0;
+    };
+}

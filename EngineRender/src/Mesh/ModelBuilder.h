@@ -8,10 +8,17 @@
 
 using namespace std;
 
+namespace EngineRender::Mesh
+{
+    
 template<typename T> class ModelBuilder : public Mesh
 {
 public:
-	ModelBuilder(int allocateVertexes, VertexStream* stream) : _vertexArray(std::make_unique<vector<T>>()), _indexArray(std::make_unique<vector<unsigned int>>()), _stream(stream)
+	ModelBuilder(int allocateVertexes, VertexStream::VertexStream* stream) :
+		_vertexArray(std::make_unique<vector<T>>()),
+		_indexArray(std::make_unique<vector<unsigned int>>()),
+		_stream(stream),
+		_instances(std::make_unique<vector<glm::mat4>>())
 	{
 		_vertexArray->reserve(allocateVertexes);
 		_indexArray->reserve(allocateVertexes);
@@ -61,20 +68,35 @@ public:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * _indexArray->size(), _indexArray->data(), GL_STATIC_DRAW);
 
 		_stream->InitAttributePointers();
+		_modelSize = _indexArray->size();
+	}
+
+	void AddInstance(const glm::mat4& transform)
+	{
+		_instances->push_back(transform);
+	}
+
+	const std::unique_ptr<vector<glm::mat4>>& GetInstances() const
+	{
+		return _instances;
 	}
 
 	void Attach() const override { glBindVertexArray(_VAO); }
-	unsigned int GetDrawSize() const override { return static_cast<unsigned int>(_indexArray->size()); }
+	unsigned int GetDrawSize() const override { return _modelSize; }
 
 private:
 	std::unique_ptr<vector<T>> _vertexArray;
 	std::unique_ptr<vector<unsigned int>> _indexArray;
+	unsigned int _modelSize;
 
 	unsigned int _VAO;
 	unsigned int _VBO;
 	unsigned int _EBO;
 
-	std::unique_ptr<VertexStream> _stream;
+	std::unique_ptr<VertexStream::VertexStream> _stream;
+	std::unique_ptr<vector<glm::mat4>> _instances;
 };
+
+}
 
 #endif

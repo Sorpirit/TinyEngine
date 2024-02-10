@@ -2,20 +2,23 @@
 
 #include "FileSystem/RootHandle.h"
 
-class Texture
+namespace EngineRender
 {
-public:
-	Texture(EngineLibrary::FileSystem::PathHandle handle, bool containsAlpha = false);
-	~Texture();
+    class Texture
+    {
+    public:
+        Texture(EngineLibrary::FileSystem::PathHandle handle, bool containsAlpha = false);
+        ~Texture();
 
-	void Load();
-	void Attach(int offset = 0) const;
-	unsigned int GetIndex() const { return _glIndex; }
+        void Load();
+        void Attach(int offset = 0) const;
+        unsigned int GetIndex() const { return _glIndex; }
 
-private:
-	EngineLibrary::FileSystem::PathHandle _handle;
-	bool _containsAlpha;
+    private:
+        EngineLibrary::FileSystem::PathHandle _handle;
+        bool _containsAlpha;
 
-	unsigned int _glIndex;
-};
+        unsigned int _glIndex;
+    };
+}
 

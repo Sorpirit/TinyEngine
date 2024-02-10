@@ -7,29 +7,26 @@
 
 namespace EngineRender::VertexStream
 {
-    struct ColoredVertex {
+    struct TextureVertex {
         glm::vec3 Position;
-        glm::vec3 Color;
+        glm::vec2 UV;
     };
 
-    class ColoredVertexStream : public VertexStream
+    class TextureVertexStream : public VertexStream
     {
     public:
         void InitAttributePointers() override
         {
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
             glEnableVertexAttribArray(1);
         }
 
         int GetSize() override 
         {
-            int size = sizeof(ColoredVertex);
+            int size = sizeof(TextureVertex);
             return size;
         }
-
-    private:
-
     };
 }

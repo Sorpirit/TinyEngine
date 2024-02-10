@@ -3,22 +3,24 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 
-class ScreenQuad
+namespace EngineRender
 {
-public:
-	ScreenQuad();
-	~ScreenQuad();
+    class ScreenQuad
+    {
+    public:
+        ScreenQuad();
+        ~ScreenQuad();
 
-	void Init();
-	void Draw();
+        void Init();
+        void Draw();
 
-private:
-	unsigned int _VBO;
-	unsigned int _VAO;
-	unsigned int _EBO;
+    private:
+        unsigned int _VBO;
+        unsigned int _VAO;
+        unsigned int _EBO;
 
-	ShaderProgram _program;
-	Texture _simpleTex;
-	Texture _emojiTex;
-};
-
+        ShaderProgram _program;
+        Texture _simpleTex;
+        Texture _emojiTex;
+    };
+}

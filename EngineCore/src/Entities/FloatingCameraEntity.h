@@ -24,12 +24,11 @@ namespace EngineCore::Entities
         const Input* _input;
         EngineRender::Render* _render;
 
-        CameraSettings _cameraSettings;
+        EngineRender::CameraSettings _cameraSettings;
         
         glm::vec3 _position;
 
         glm::vec3 _rotationEurler;
-        glm::quat _rotation;
 
         float _speed = 19.5f;
         float _shiftSpeed = 50.0f;

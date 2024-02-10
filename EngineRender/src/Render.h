@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "ScreenQuad.h"
-#include "GeometryDraw.h"
+#include "DebugDraw.h"
 #include "FrameInfo.h"
 
 namespace EngineRender
@@ -27,16 +27,16 @@ namespace EngineRender
 		GLFWwindow* const GLWindow;
 
 		void SetMainCameraParams(const CameraSettings& settings);
+
+		const DebugDraw& GetDebugDraw() const { return _debugDrawPass; }
 	private:
 
 		int _screenWidth;
 		int _screenHeight;
 
 		ScreenQuad _testingQuad;
-		GeometryDraw _geometryDrawPass;
-		std::unique_ptr<Mesh> _testMesh;
+		DebugDraw _debugDrawPass;
 		CameraSettings _camera;
-		std::unique_ptr<vector<glm::mat4>> _instances;
 	};
 }
 

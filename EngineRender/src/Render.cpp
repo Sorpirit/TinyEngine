@@ -1,15 +1,8 @@
-#include <chrono>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-
 #include "Render.h"
 #include "RenderDebug.h"
-
-#include "Mesh\ModelBuilder.h"
-#include "Mesh\MeshBuilderHelpers.h"
-#include "VertexStream/ColoredVertexStream.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,8 +30,7 @@ namespace EngineRender
     Render::Render(int screenWidth, int screenHeight, const char* applicationName) : 
         GLWindow(InitWindow(screenWidth, screenHeight, applicationName)), 
         _screenWidth(screenWidth),
-        _screenHeight(screenHeight),
-        _instances(make_unique<vector<glm::mat4>>())
+        _screenHeight(screenHeight)
     {
         
         if (!GLWindow)
@@ -78,32 +70,14 @@ namespace EngineRender
         // Render configuration
         // --------------------
         //Basics.Init();
-        _geometryDrawPass.Init();
-        auto stream = new ColoredVertexStream();
-        std::unique_ptr<ModelBuilder<ColoredVertex>> meshBuilder = std::make_unique<ModelBuilder<ColoredVertex>>(6, stream);
-        MeshBuilderHelpers::AddCube(meshBuilder);
-        meshBuilder->SubmitModel();
+        _debugDrawPass.Init();
         
-        _testMesh = std::move(meshBuilder);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
         const auto view = glm::lookAt(glm::vec3(0, 0, -5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         const auto projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), .05f, 100.0f);
         _camera = {
             view,
             projection
         };
-
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(0.0f)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(1.0f, 3.0, -1.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(-3.0f, -4.0, 1.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(-2.0f, -2.0, 3.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(7.0f, 3.0, 1.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(-3.0f, 1.0, 5.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(3.0f, -1.5, 3.0)));
-        _instances->push_back(glm::translate(glm::mat4(1), glm::vec3(2.4f, -1.0, -2.0)));
     }
 
     Render::~Render()
@@ -116,15 +90,8 @@ namespace EngineRender
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 const viewProjection = _camera.projection * _camera.view;
-        for (size_t i = 0; i < _instances->size(); i++)
-        {
-            (*_instances)[i] = glm::rotate((*_instances)[i], frameInfo.DeltaTime * glm::radians(20.0f * (i + 1)),
-                                        glm::vec3(0.5f, 1.0f, 0.0f));
-
-            auto const modelViewProjection = viewProjection * (*_instances)[i];
-            _geometryDrawPass.Draw(modelViewProjection, *_testMesh);
-        }
+        const glm::mat4 viewProjection = _camera.projection * _camera.view;
+        _debugDrawPass.Draw(viewProjection);
 
         glfwSwapBuffers(GLWindow);
     }

@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\GeometryDraw.h" />
+    <ClInclude Include="src\DebugDraw.h" />
     <ClInclude Include="src\Mesh\Mesh.h" />
     <ClInclude Include="src\Mesh\ModelBuilder.h" />
     <ClInclude Include="src\ParameterBuilder.h" />
@@ -144,11 +144,12 @@
     <ClInclude Include="src\ScreenQuad.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\VertexStream\TextureVertexStream.h" />
     <ClInclude Include="src\VertexStream\VertexStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CameraSettings.h" />
-    <ClCompile Include="src\GeometryDraw.cpp" />
+    <ClCompile Include="src\DebugDraw.cpp" />
     <ClCompile Include="src\ParameterBuilder.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\ScreenQuad.cpp" />

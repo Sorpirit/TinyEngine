@@ -15,8 +15,7 @@ namespace EngineCore::Entities
         _render = engine->GetRender();
 
         _position = glm::vec3(0, 0, 1.0f);
-        _rotationEurler = glm::vec3(0, glm::radians(-90.0f), 0);
-        _rotation = glm::quat(_rotationEurler);
+        _rotationEurler = glm::vec3(0, 0, 0);
         
         const glm::vec3 forward = glm::vec3(0, 0, -1.0f);
         const glm::vec3 up = glm::vec3(0, 1.0f, 0);
@@ -33,10 +32,10 @@ namespace EngineCore::Entities
         //rotation
         const float sensitivity = _input->GetSensitivity(); 
         if(_input->IsKeyHeld(GLFW_KEY_Q))
-            _rotationEurler.z += sensitivity * frameInfo.DeltaTime;
+            _rotationEurler.z += sensitivity * _rotationSpeed * frameInfo.DeltaTime;
 
         if(_input->IsKeyHeld(GLFW_KEY_E))
-            _rotationEurler.z -= sensitivity * frameInfo.DeltaTime;
+            _rotationEurler.z -= sensitivity * _rotationSpeed * frameInfo.DeltaTime;
 
         if(_input->IsKeyReleased(GLFW_KEY_ESCAPE))
             _input->LockCursor(false);
@@ -48,9 +47,9 @@ namespace EngineCore::Entities
         _rotationEurler.x += glm::clamp(mouseDelta.y, -clampMouseDelta, clampMouseDelta) * _rotationSpeed * frameInfo.DeltaTime;
         _rotationEurler.y += -glm::clamp(mouseDelta.x, -clampMouseDelta, clampMouseDelta) * _rotationSpeed * frameInfo.DeltaTime;
 
-        _rotationEurler.x = glm::clamp(_rotationEurler.x, -75.0f, 75.0f);
-        _rotation = glm::quat(_rotationEurler);
-        _rotation = normalize(_rotation);
+        const float rotationLimits = glm::radians(89.0f);
+        _rotationEurler.x = glm::clamp(_rotationEurler.x, -rotationLimits, rotationLimits);
+        const glm::quat _rotation = normalize(glm::quat(_rotationEurler));
        
         //translation
 
