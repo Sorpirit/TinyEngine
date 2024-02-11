@@ -8,7 +8,7 @@
 
 namespace EngineRender
 {
-    static void DrawModel(const glm::mat4& viewProjection, ParameterBuilder& paramBuilder, const Mesh::ModelBuilder<VertexStream::ColoredVertex>& model)
+    static void DrawModel(const CameraSettings& camera, ParameterBuilder& paramBuilder, const Mesh::ModelBuilder<VertexStream::ColoredVertex>& model)
     {
         model.Attach();
 
@@ -17,15 +17,16 @@ namespace EngineRender
 
         for (const auto& modelTransform : *instance)
         {
-            paramBuilder.AddParameter("ViewProjection", viewProjection * modelTransform);
+            paramBuilder.AddParameter("Model", modelTransform);
+            paramBuilder.AddParameter("ViewModelRotation", glm::mat3(glm::transpose(glm::inverse(camera.view * modelTransform))) );
             glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
         }
     }
 
     static ShaderProgram InitProgram()
     {
-        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredVertex.vs"), Vertex };
-        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredPixel.ps"), Pixel };
+        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredVertex.vert"), Vertex };
+        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredPixel.frag"), Pixel };
         return ShaderProgram(vs, ps);
     }
 
@@ -51,18 +52,20 @@ namespace EngineRender
         _lightDraw = &light;
     }
 
-    void DebugDraw::Draw(const glm::mat4& viewProjection)
+    void DebugDraw::Draw(const CameraSettings& camera)
     {
         auto paramBuilder = _program.Build();
 
+        paramBuilder.AddParameter("Projection", camera.projection);
+        paramBuilder.AddParameter("View", camera.view);
         paramBuilder.AddParameter("LightColor", _lightDraw->GetLightColor());
-        paramBuilder.AddParameter("LightPosition", _lightDraw->GetLightPosition());
+        paramBuilder.AddParameter("LightPositionView", glm::vec3(camera.view * glm::vec4(_lightDraw->GetLightPosition(), 1.0)));
 
-        DrawModel(viewProjection, paramBuilder, *_globalDebugDraw);
+        DrawModel(camera, paramBuilder, *_globalDebugDraw);
 
         for (const auto debugDraw : *_debugDraws)
         {
-            DrawModel(viewProjection, paramBuilder, *debugDraw);
+            DrawModel(camera, paramBuilder, *debugDraw);
         }
     }
 

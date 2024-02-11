@@ -17,7 +17,7 @@ namespace EngineRender
         DebugDraw();
         ~DebugDraw();
         void Init(const LightDraw& light);
-        void Draw(const glm::mat4& viewProjection);
+        void Draw(const CameraSettings& camera);
 	
         const std::unique_ptr<Mesh::ModelBuilder<VertexStream::ColoredVertex>>& GetGlobalDebugDraw() const { return _globalDebugDraw; }
         Mesh::ModelBuilder<VertexStream::ColoredVertex>* AllocateLocal(int prealocateVertecies = 0) const;

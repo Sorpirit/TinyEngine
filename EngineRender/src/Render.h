@@ -9,6 +9,7 @@
 #include "DebugDraw.h"
 #include "FrameInfo.h"
 #include "LightDraw.h"
+#include "TextureDraw.h"
 
 namespace EngineRender
 {
@@ -40,6 +41,7 @@ namespace EngineRender
 		ScreenQuad _testingQuad;
 		DebugDraw _debugDrawPass;
 		LightDraw _lightDrawPass;
+		TextureDraw _textureDrawPass;
 		CameraSettings _camera;
 	};
 }

@@ -147,6 +147,7 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\VertexStream\TextureVertexStream.h" />
     <ClInclude Include="src\VertexStream\VertexStream.h" />
+    <ClInclude Include="src\TextureDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\LightDraw.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexStream\ColoredVertexStream.h" />
+    <ClCompile Include="src\TextureDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EngineLibrary\EngineLibrary.vcxproj">

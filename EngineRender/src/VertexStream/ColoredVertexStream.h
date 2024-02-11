@@ -9,6 +9,7 @@ namespace EngineRender::VertexStream
 {
     struct ColoredVertex {
         glm::vec3 Position;
+        glm::vec3 Normal;
         glm::vec3 Color;
     };
 
@@ -17,10 +18,12 @@ namespace EngineRender::VertexStream
     public:
         void InitAttributePointers() override
         {
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
             glEnableVertexAttribArray(1);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+            glEnableVertexAttribArray(2);
         }
 
         int GetSize() override 

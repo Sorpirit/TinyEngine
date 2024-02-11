@@ -12,8 +12,8 @@ namespace EngineRender
 {
 	static ShaderProgram InitProgram()
 	{
-		Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitVertex.vs"), Vertex };
-		Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitPixel.ps"), Pixel };
+		Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitVertex.vert"), Vertex };
+		Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitPixel.frag"), Pixel };
 		return ShaderProgram(vs, ps);
 	}
 
@@ -27,8 +27,12 @@ namespace EngineRender
 	{
 		_program.Compile();
 	}
-	void LightDraw::Draw(const glm::mat4& viewProjection)
+
+	void LightDraw::Draw(const FrameInfo& frameInfo, const glm::mat4& viewProjection)
 	{
+		auto rotation = glm::rotate(glm::mat4(1), glm::radians(60.0f) * frameInfo.DeltaTime, glm::vec3(0, 1.0f, 0));
+		_lightPosition = glm::vec3(rotation * glm::vec4(_lightPosition, 1.0f));
+
 		auto paramBuilder = _program.Build();
 
 		paramBuilder.AddParameter("LightColor", _lightColor);
@@ -38,8 +42,9 @@ namespace EngineRender
 		const auto instance = _lightMesh->GetInstances().get();
 		const unsigned int modelSize = _lightMesh->GetDrawSize();
 
-		for (const auto& modelTransform : *instance)
+		for (auto& modelTransform : *instance)
 		{
+			modelTransform = rotation * modelTransform;
 			paramBuilder.AddParameter("ViewProjection", viewProjection * modelTransform);
 			glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
 		}

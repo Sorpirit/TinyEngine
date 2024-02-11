@@ -7,6 +7,7 @@
 #include "CameraSettings.h"
 #include "Mesh/ModelBuilder.h"
 #include "VertexStream/ColoredVertexStream.h"
+#include "FrameInfo.h"
 
 namespace EngineRender
 {
@@ -16,7 +17,7 @@ namespace EngineRender
 		LightDraw();
 
 		void Init();
-		void Draw(const glm::mat4& viewProjection);
+		void Draw(const FrameInfo& frameInfo, const glm::mat4& viewProjection);
 
 		void SetLightParameters(glm::vec3 position, glm::vec4 color);
 		const glm::vec3& GetLightPosition() const { return _lightPosition; }

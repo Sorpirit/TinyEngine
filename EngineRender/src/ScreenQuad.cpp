@@ -14,8 +14,8 @@ namespace EngineRender
 {
     static ShaderProgram InitProgram() 
     {
-        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadVertex.vs"), Vertex };
-        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadVertex.vs"), Pixel };
+        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadVertex.vert"), Vertex };
+        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadPixel.frag"), Pixel };
         return ShaderProgram(vs, ps);
     }
 

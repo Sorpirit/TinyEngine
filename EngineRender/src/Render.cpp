@@ -72,6 +72,7 @@ namespace EngineRender
         //Basics.Init();
         _lightDrawPass.Init();
         _debugDrawPass.Init(_lightDrawPass);
+        _textureDrawPass.Init(_lightDrawPass);
         
         const auto view = glm::lookAt(glm::vec3(0, 0, -5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         const auto projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), .05f, 100.0f);
@@ -92,8 +93,9 @@ namespace EngineRender
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const glm::mat4 viewProjection = _camera.projection * _camera.view;
-        _debugDrawPass.Draw(viewProjection);
-        _lightDrawPass.Draw(viewProjection);
+        _debugDrawPass.Draw(_camera);
+        _textureDrawPass.Draw(frameInfo, _camera);
+        _lightDrawPass.Draw(frameInfo, viewProjection);
 
         glfwSwapBuffers(GLWindow);
     }
