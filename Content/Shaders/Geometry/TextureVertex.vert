@@ -1,24 +1,29 @@
 #version 330 core
 
+struct CameraSettings
+{
+    mat4 View;
+    mat4 Projection;
+};
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aUV;
+
+uniform CameraSettings uCamera;
+uniform mat4 uModel;
+uniform mat3 uViewModelRotation;
 
 out vec3 FragPosView;
 out vec3 NormalView;
 out vec2 UV;
 
-uniform mat4 Projection;
-uniform mat4 View;
-uniform mat4 Model;
-uniform mat3 ViewModelRotation;
-
 void main()
 {
-    vec4 fragmentPositionView = View * Model * vec4(aPos, 1.0);
-    gl_Position = Projection * fragmentPositionView;
+    vec4 fragmentPositionView = uCamera.View * uModel * vec4(aPos, 1.0);
+    gl_Position = uCamera.Projection * fragmentPositionView;
 
     FragPosView = vec3(fragmentPositionView);
-    NormalView = normalize(ViewModelRotation * aNormal);
+    NormalView = normalize(uViewModelRotation * aNormal);
     UV = aUV;
 }

@@ -1,36 +1,50 @@
 #version 330 core
 
-out vec4 FragColor;
+struct Material {
+    vec3 Ambient;
+    vec3 Diffuse;
+    vec3 Specular;
+    float Shininess;
+};
+
+struct Light {
+    vec3 PositionView;
+  
+    vec3 Ambient;
+    vec3 Diffuse;
+    vec3 Specular;
+};
 
 in vec3 FragPosView;
 in vec3 NormalView;
 in vec3 VertexColor;
 
-uniform vec4 LightColor;
-uniform vec3 LightPositionView;
+uniform Light uLight;
+uniform Material uMaterial;
 
-vec3 PhongLight(vec3 fragPos, vec3 nromal, vec3 lightPos, vec3 lightColor, float ambientStrength, float specularStrength, float shyness)
+out vec4 FragColor;
+
+vec3 PhongLight(vec3 fragPos, vec3 nromal)
 {
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = uMaterial.Ambient * uLight.Ambient;
 
-    vec3 lightDir = normalize(lightPos - fragPos); 
+    vec3 lightDir = normalize(uLight.PositionView - fragPos); 
     float diff = max(dot(nromal, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
+    vec3 diffuse = diff * uMaterial.Diffuse * uLight.Diffuse;
 
     vec3 viewDir = normalize(-fragPos);
     vec3 reflectDir = reflect(-lightDir, nromal);
 
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shyness);
-    vec3 specular = specularStrength * spec * lightColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.Shininess);
+    vec3 specular = spec * uMaterial.Specular * uLight.Specular;
 
     return ambient + diffuse + specular;
 }
 
 void main()
 {
-    vec3 light = vec3(0, 0, 0);
-    light = PhongLight(FragPosView, NormalView, LightPositionView, LightColor.rgb, 0.1f, 0.5f, 32);
+    vec3 light = PhongLight(FragPosView, NormalView);
 
-    vec3 result = VertexColor * light;
+    vec3 result = light;
     FragColor = vec4(result, 1.0);
 } 

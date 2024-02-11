@@ -21,6 +21,9 @@ namespace EngineRender
 		_program(InitProgram()),
 		_lightMesh(std::make_unique<Mesh::ModelBuilder<VertexStream::ColoredVertex>>(36, new VertexStream::ColoredVertexStream()))
 	{
+		_settings.Ambient = glm::vec3(0.2f);
+		_settings.Diffuse = glm::vec3(0.5f);
+		_settings.Specular = glm::vec3(1.0f);
 	}
 
 	void LightDraw::Init()
@@ -28,14 +31,28 @@ namespace EngineRender
 		_program.Compile();
 	}
 
-	void LightDraw::Draw(const FrameInfo& frameInfo, const glm::mat4& viewProjection)
+	void LightDraw::Draw(const FrameInfo& frameInfo, const CameraSettings& camera)
 	{
 		auto rotation = glm::rotate(glm::mat4(1), glm::radians(60.0f) * frameInfo.DeltaTime, glm::vec3(0, 1.0f, 0));
 		_lightPosition = glm::vec3(rotation * glm::vec4(_lightPosition, 1.0f));
 
+
+		_lightColor.x = sin(frameInfo.TotalTime * 2.0f);
+		_lightColor.y = sin(frameInfo.TotalTime * 0.7f);
+		_lightColor.z = sin(frameInfo.TotalTime * 1.3f);
+
+		glm::vec3 diffuseColor = _lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = _lightColor * glm::vec3(0.2f);
+
+		_settings.PositionView = glm::vec3(camera.View * glm::vec4(_lightPosition, 1.0f));
+		_settings.Ambient = ambientColor;
+		_settings.Diffuse = diffuseColor;
+
+
 		auto paramBuilder = _program.Build();
 
-		paramBuilder.AddParameter("LightColor", _lightColor);
+		paramBuilder.AddParameter("uMultiplyColor", _lightColor);
+		paramBuilder.AddParameter(camera);
 
 		_lightMesh->Attach();
 
@@ -45,7 +62,7 @@ namespace EngineRender
 		for (auto& modelTransform : *instance)
 		{
 			modelTransform = rotation * modelTransform;
-			paramBuilder.AddParameter("ViewProjection", viewProjection * modelTransform);
+			paramBuilder.AddParameter("uModel", modelTransform);
 			glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
 		}
 	}

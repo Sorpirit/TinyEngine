@@ -54,6 +54,9 @@
     <ClInclude Include="src\TextureDraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Materials\MaterialSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Render.cpp">

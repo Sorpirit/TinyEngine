@@ -20,8 +20,8 @@ namespace EngineCore::Entities
         const glm::vec3 forward = glm::vec3(0, 0, -1.0f);
         const glm::vec3 up = glm::vec3(0, 1.0f, 0);
 
-        _cameraSettings.view = glm::lookAt(_position, _position + forward, up);
-        _cameraSettings.projection = glm::perspective(glm::radians(90.0f), 1.0f, .05f, 100.0f);
+        _cameraSettings.View = glm::lookAt(_position, _position + forward, up);
+        _cameraSettings.Projection = glm::perspective(glm::radians(90.0f), 1.0f, .05f, 100.0f);
         _render->SetMainCameraParams(_cameraSettings);
 
         _input->LockCursor(true);
@@ -78,13 +78,13 @@ namespace EngineCore::Entities
         if(_input->IsKeyHeld(GLFW_KEY_LEFT_CONTROL))
             _position += -up * scaledSpeed;
         
-        _cameraSettings.view = glm::lookAt(_position, _position + forward, up);
+        _cameraSettings.View = glm::lookAt(_position, _position + forward, up);
         _render->SetMainCameraParams(_cameraSettings);
     }
 
     void FloatingCameraEntity::SetParameters(float fov, float near, float far)
     {
         const auto projection = glm::perspective(glm::radians(fov), static_cast<float>(_render->GetScreenWidth()) / static_cast<float>(_render->GetScreenHeight()), near, far);
-        _cameraSettings.projection = projection;
+        _cameraSettings.Projection = projection;
     }
 }

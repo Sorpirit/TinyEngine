@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Mesh/Mesh.h"
+#include "Materials/MaterialSettings.h"
 #include "ShaderProgram.h"
 #include "CameraSettings.h"
 #include "Mesh/ModelBuilder.h"
@@ -24,6 +25,7 @@ namespace EngineRender
 	
     private:
         ShaderProgram _program;
+        Materials::MaterialSettings _material;
 
         std::unique_ptr<Mesh::ModelBuilder<VertexStream::ColoredVertex>> _globalDebugDraw;
         std::unique_ptr<std::vector<Mesh::ModelBuilder<VertexStream::ColoredVertex>*>> _debugDraws;

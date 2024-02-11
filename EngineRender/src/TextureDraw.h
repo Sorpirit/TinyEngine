@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mesh/Mesh.h"
+#include "Materials/MaterialSettings.h"
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "CameraSettings.h"
@@ -21,6 +22,7 @@ namespace EngineRender
 	private:
 		ShaderProgram _program;
 		Texture _simpleTex;
+		Materials::MaterialSettings _material;
 
 		std::unique_ptr<Mesh::ModelBuilder<VertexStream::TextureVertex>> _textureMesh;
 

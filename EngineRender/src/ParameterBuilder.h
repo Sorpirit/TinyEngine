@@ -9,6 +9,13 @@ using namespace std;
 namespace EngineRender
 {
     class ShaderProgram;
+    class ParameterBuilder;
+
+    struct ShaderData
+    {
+        virtual void UploadData(ParameterBuilder& builder) const = 0;
+    };
+    
     class ParameterBuilder
     {
     public:
@@ -34,6 +41,7 @@ namespace EngineRender
         void AddParameter(string name, const glm::mat4& x);
         void AddParameter(string name, const glm::mat3& x);
         void AddParameter(string name, const glm::mat2& x);
+        void AddParameter(const ShaderData& data);
 
         void AddTexture(string name, Texture& texture);
 

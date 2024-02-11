@@ -76,10 +76,8 @@ namespace EngineRender
         
         const auto view = glm::lookAt(glm::vec3(0, 0, -5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         const auto projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), .05f, 100.0f);
-        _camera = {
-            view,
-            projection
-        };
+        _camera.View = view;
+        _camera.Projection = projection;
     }
 
     Render::~Render()
@@ -92,11 +90,10 @@ namespace EngineRender
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const glm::mat4 viewProjection = _camera.projection * _camera.view;
+        _lightDrawPass.Draw(frameInfo, _camera);
         _debugDrawPass.Draw(_camera);
         _textureDrawPass.Draw(frameInfo, _camera);
-        _lightDrawPass.Draw(frameInfo, viewProjection);
-
+ 
         glfwSwapBuffers(GLWindow);
     }
 

@@ -17,8 +17,8 @@ namespace EngineRender
 
         for (const auto& modelTransform : *instance)
         {
-            paramBuilder.AddParameter("Model", modelTransform);
-            paramBuilder.AddParameter("ViewModelRotation", glm::mat3(glm::transpose(glm::inverse(camera.view * modelTransform))) );
+            paramBuilder.AddParameter("uModel", modelTransform);
+            paramBuilder.AddParameter("uViewModelRotation", glm::mat3(glm::transpose(glm::inverse(camera.View * modelTransform))) );
             glDrawElements(GL_TRIANGLES, modelSize, GL_UNSIGNED_INT, 0);
         }
     }
@@ -36,6 +36,10 @@ namespace EngineRender
         _debugDraws(std::make_unique<std::vector<Mesh::ModelBuilder<VertexStream::ColoredVertex>*>>())
     {
 	
+        _material.Ambient = glm::vec3(1.0f, 0.5f, 0.31f);
+        _material.Diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+        _material.Specular = glm::vec3(0.5f, 0.5f, 0.5f);
+        _material.Shininess = 32.0f;
     }
 
     DebugDraw::~DebugDraw()
@@ -56,10 +60,9 @@ namespace EngineRender
     {
         auto paramBuilder = _program.Build();
 
-        paramBuilder.AddParameter("Projection", camera.projection);
-        paramBuilder.AddParameter("View", camera.view);
-        paramBuilder.AddParameter("LightColor", _lightDraw->GetLightColor());
-        paramBuilder.AddParameter("LightPositionView", glm::vec3(camera.view * glm::vec4(_lightDraw->GetLightPosition(), 1.0)));
+        paramBuilder.AddParameter(camera);
+        paramBuilder.AddParameter(_lightDraw->GetLightSettings());
+        paramBuilder.AddParameter(_material);
 
         DrawModel(camera, paramBuilder, *_globalDebugDraw);
 

@@ -106,6 +106,11 @@ namespace EngineRender
         glUniformMatrix2fv(parameterLocation, 1, GL_FALSE, glm::value_ptr(x));
     }
 
+    void ParameterBuilder::AddParameter(const ShaderData& data)
+    {
+        data.UploadData(*this);
+    }
+
     void ParameterBuilder::AddTexture(string name, Texture& texture)
     {
         texture.Attach(_textureCounter);

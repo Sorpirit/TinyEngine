@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="src\LightDraw.h" />
     <ClInclude Include="src\DebugDraw.h" />
+    <ClInclude Include="src\Materials\MaterialSettings.h" />
     <ClInclude Include="src\Mesh\Mesh.h" />
     <ClInclude Include="src\Mesh\ModelBuilder.h" />
     <ClInclude Include="src\ParameterBuilder.h" />
