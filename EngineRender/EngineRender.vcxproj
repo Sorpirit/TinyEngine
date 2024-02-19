@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Shaders\ShaderManager.h" />
     <ClInclude Include="src\LightDraw.h" />
     <ClInclude Include="src\DebugDraw.h" />
     <ClInclude Include="src\Materials\MaterialSettings.h" />
@@ -142,7 +143,7 @@
     <ClInclude Include="src\Mesh\ModelBuilder.h" />
     <ClInclude Include="src\ParameterBuilder.h" />
     <ClInclude Include="src\RenderDebug.h" />
-    <ClInclude Include="src\ShaderProgram.h" />
+    <ClInclude Include="src\Shaders\ShaderProgram.h" />
     <ClInclude Include="src\ScreenQuad.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Texture.h" />
@@ -151,11 +152,11 @@
     <ClInclude Include="src\TextureDraw.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Shaders\ShaderManager.cpp" />
     <ClCompile Include="src\LightDraw.cpp" />
     <ClCompile Include="src\CameraSettings.h" />
     <ClCompile Include="src\DebugDraw.cpp" />
     <ClCompile Include="src\ParameterBuilder.cpp" />
-    <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\ScreenQuad.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Texture.cpp" />

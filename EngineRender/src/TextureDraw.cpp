@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "ShaderProgram.h"
 #include "FileSystem/EngineContent.h"
 #include "ParameterBuilder.h"
 
@@ -25,33 +24,35 @@ namespace EngineRender
 		}
 	}
 
-	static ShaderProgram InitProgram()
+	static Materials::MaterialPBRSettings InitMaterial()
 	{
-		Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/TextureVertex.vert"), Vertex };
-		Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/TexturePixel.frag"), Pixel };
-		return ShaderProgram(vs, ps);
+		auto diffuse = std::make_unique<Texture>(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/container2.png"), true);
+		auto specular = std::make_unique<Texture>(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/container2_specular.png"), true);
+		auto emissive = std::make_unique<Texture>(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/container2_emissive.png"), true);
+		return {
+			diffuse,
+			specular,
+			emissive,
+			32.0f
+		};
 	}
 
-	static Texture InitTexture()
-	{
-		return Texture(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/wall.png"));
-	}
-
-	TextureDraw::TextureDraw() :
-		_program(InitProgram()),
-		_simpleTex(InitTexture()),
+	TextureDraw::TextureDraw(Shaders::ShaderManager& manager) :
+		_program(manager.Compile(
+			EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/TextureVertex.vert"),
+			EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/TexturePixel.frag")
+		)),
+		_material(InitMaterial()),
 		_textureMesh(std::make_unique<Mesh::ModelBuilder<VertexStream::TextureVertex>>(100, new VertexStream::TextureVertexStream()))
 	{
-		_material.Ambient = glm::vec3(1.0f, 0.5f, 0.31f);
-		_material.Diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
-		_material.Specular = glm::vec3(0.5f, 0.5f, 0.5f);
-		_material.Shininess = 32.0f;
 	}
 
 	void TextureDraw::Init(const LightDraw& light)
 	{
-		_program.Compile();
-		_simpleTex.Load();
+		_material.Diffuse->Load();
+		_material.Specular->Load();
+		_material.Emissive->Load();
+		
 		_lightDraw = &light;
 
 		Mesh::MeshBuilderHelpers::AddCube(*_textureMesh, glm::mat4(1));
@@ -64,12 +65,13 @@ namespace EngineRender
 	void TextureDraw::Draw(const FrameInfo& frame, const CameraSettings& camera)
 	{
 		auto paramBuilder = _program.Build();
-
-		_simpleTex.Attach();
-
+		
 		paramBuilder.AddParameter(camera);
-		paramBuilder.AddParameter(_lightDraw->GetLightSettings());
+		paramBuilder.AddParameter(_lightDraw->GetDirLightSettings());
+		paramBuilder.AddParameter(_lightDraw->GetPointLightSettings());
+		paramBuilder.AddParameter(_lightDraw->GetSpotLightSettings());
 		paramBuilder.AddParameter(_material);
+		paramBuilder.AddParameter("uEmissiveStrength", (sin(frame.TotalTime * 4.7f) * 0.30f + 0.50f ));
 
 		DrawModel(camera, paramBuilder, *_textureMesh);
 	}

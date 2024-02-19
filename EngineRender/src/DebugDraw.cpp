@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "ShaderProgram.h"
 #include "FileSystem/EngineContent.h"
 #include "ParameterBuilder.h"
 
@@ -23,20 +22,17 @@ namespace EngineRender
         }
     }
 
-    static ShaderProgram InitProgram()
-    {
-        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredVertex.vert"), Vertex };
-        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredPixel.frag"), Pixel };
-        return ShaderProgram(vs, ps);
-    }
 
-    DebugDraw::DebugDraw() :
-        _program(InitProgram()),
+    DebugDraw::DebugDraw(Shaders::ShaderManager& manager) :
+        _program(manager.Compile(
+            EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredVertex.vert"), 
+            EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/ColoredPixel.frag")
+        )),
+
         _globalDebugDraw(std::make_unique<Mesh::ModelBuilder<VertexStream::ColoredVertex>>(100, new VertexStream::ColoredVertexStream())),
         _debugDraws(std::make_unique<std::vector<Mesh::ModelBuilder<VertexStream::ColoredVertex>*>>())
     {
 	
-        _material.Ambient = glm::vec3(1.0f, 0.5f, 0.31f);
         _material.Diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
         _material.Specular = glm::vec3(0.5f, 0.5f, 0.5f);
         _material.Shininess = 32.0f;
@@ -52,7 +48,6 @@ namespace EngineRender
 
     void DebugDraw::Init(const LightDraw& light)
     {
-        _program.Compile();
         _lightDraw = &light;
     }
 
@@ -61,7 +56,9 @@ namespace EngineRender
         auto paramBuilder = _program.Build();
 
         paramBuilder.AddParameter(camera);
-        paramBuilder.AddParameter(_lightDraw->GetLightSettings());
+        paramBuilder.AddParameter(_lightDraw->GetDirLightSettings());
+        paramBuilder.AddParameter(_lightDraw->GetPointLightSettings());
+        paramBuilder.AddParameter(_lightDraw->GetSpotLightSettings());
         paramBuilder.AddParameter(_material);
 
         DrawModel(camera, paramBuilder, *_globalDebugDraw);

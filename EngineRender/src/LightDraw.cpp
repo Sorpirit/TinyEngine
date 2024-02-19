@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "ShaderProgram.h"
 #include "FileSystem/EngineContent.h"
 #include "ParameterBuilder.h"
 
@@ -10,25 +9,36 @@
 
 namespace EngineRender
 {
-	static ShaderProgram InitProgram()
-	{
-		Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitVertex.vert"), Vertex };
-		Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitPixel.frag"), Pixel };
-		return ShaderProgram(vs, ps);
-	}
-
-	LightDraw::LightDraw() :
-		_program(InitProgram()),
+	LightDraw::LightDraw(Shaders::ShaderManager& manager) :
+		_program(manager.Compile(
+			EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitVertex.vert"),
+			EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/Geometry/UnlitPixel.frag")
+		)),
 		_lightMesh(std::make_unique<Mesh::ModelBuilder<VertexStream::ColoredVertex>>(36, new VertexStream::ColoredVertexStream()))
 	{
-		_settings.Ambient = glm::vec3(0.2f);
-		_settings.Diffuse = glm::vec3(0.5f);
-		_settings.Specular = glm::vec3(1.0f);
-	}
+		_pointLightSettings.Ambient = glm::vec3(0.01f);
+		_pointLightSettings.Diffuse = glm::vec3(0.5f);
+		_pointLightSettings.Specular = glm::vec3(1.0f);
 
-	void LightDraw::Init()
-	{
-		_program.Compile();
+		_spotLightSettings.Ambient = glm::vec3(0.05f);
+		_spotLightSettings.Diffuse = glm::vec3(1.0f, 0.96f, .5f) * 0.5f;
+		_spotLightSettings.Specular = glm::vec3(1.0f);
+		_spotLightSettings.InnerConeAngleCos = glm::cos(glm::radians(22.5));
+		_spotLightSettings.OuterConeAngleCos = glm::cos(glm::radians(32.0));
+
+		_spotLightSettings.Constant = 1.0f;
+		_spotLightSettings.Linear = 0.09f;
+		_spotLightSettings.Quadratic = 0.032f;
+
+		_pointLightSettings.Constant = 1.0f;
+		_pointLightSettings.Linear = 0.09f;
+		_pointLightSettings.Quadratic = 0.032f;
+
+		_dirLightSettings.Ambient = glm::vec3(0.05f);
+		_dirLightSettings.Diffuse = glm::vec3(0.3f, 0.01f, .5f);
+		_dirLightSettings.Specular = glm::vec3(0.5f);
+
+		_lightDir = glm::normalize(glm::vec3(3, -1, 0.0f));
 	}
 
 	void LightDraw::Draw(const FrameInfo& frameInfo, const CameraSettings& camera)
@@ -36,17 +46,22 @@ namespace EngineRender
 		auto rotation = glm::rotate(glm::mat4(1), glm::radians(60.0f) * frameInfo.DeltaTime, glm::vec3(0, 1.0f, 0));
 		_lightPosition = glm::vec3(rotation * glm::vec4(_lightPosition, 1.0f));
 
-
-		_lightColor.x = sin(frameInfo.TotalTime * 2.0f);
-		_lightColor.y = sin(frameInfo.TotalTime * 0.7f);
-		_lightColor.z = sin(frameInfo.TotalTime * 1.3f);
+		const auto day = glm::vec3(.925, .965, .976);
+		const auto night = glm::vec3(.431, .294, .224);
+		float t = sin(frameInfo.TotalTime * 1.2f);
+		_lightColor = night * t + day * (1 - t);
 
 		glm::vec3 diffuseColor = _lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = _lightColor * glm::vec3(0.2f);
+		glm::vec3 ambientColor = _lightColor * glm::vec3(0.1f);
 
-		_settings.PositionView = glm::vec3(camera.View * glm::vec4(_lightPosition, 1.0f));
-		_settings.Ambient = ambientColor;
-		_settings.Diffuse = diffuseColor;
+		_dirLightSettings.DirectionView = glm::vec3(camera.View * glm::vec4(_lightDir, 0.0f));
+
+		_spotLightSettings.DirectionView = glm::vec3(0, 0, -1.0f);//glm::vec3(camera.View * glm::vec4(0, 0, -1.0, 0.0f));
+		_spotLightSettings.PositionView = glm::vec3(0, 0, 0.0f);// glm::vec3(camera.View * glm::vec4(0, 0, 0, 1.0f));
+
+		_pointLightSettings.PositionView = glm::vec3(camera.View * glm::vec4(_lightPosition, 1.0f));
+		_pointLightSettings.Ambient = ambientColor;
+		_pointLightSettings.Diffuse = diffuseColor;
 
 
 		auto paramBuilder = _program.Build();

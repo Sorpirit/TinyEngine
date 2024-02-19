@@ -5,6 +5,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "Shaders/ShaderManager.h"
+
 #include "ScreenQuad.h"
 #include "DebugDraw.h"
 #include "FrameInfo.h"
@@ -30,18 +32,23 @@ namespace EngineRender
 
 		void SetMainCameraParams(const CameraSettings& settings);
 
-		const DebugDraw& GetDebugDraw() const { return _debugDrawPass; }
-		LightDraw& GetLightDraw() { return _lightDrawPass; }
+		const DebugDraw& GetDebugDraw() const { return *_debugDrawPass; }
+		LightDraw& GetLightDraw() { return *_lightDrawPass; }
 	
+		EngineRender::Shaders::ShaderManager& GetShaderManager() { return *_shaderManager; }
+
 	private:
 
 		int _screenWidth;
 		int _screenHeight;
 
-		ScreenQuad _testingQuad;
-		DebugDraw _debugDrawPass;
-		LightDraw _lightDrawPass;
-		TextureDraw _textureDrawPass;
+		//Utils
+		std::unique_ptr<EngineRender::Shaders::ShaderManager> _shaderManager;
+
+		std::unique_ptr<ScreenQuad> _testingQuad;
+		std::unique_ptr<DebugDraw> _debugDrawPass;
+		std::unique_ptr<LightDraw> _lightDrawPass;
+		std::unique_ptr<TextureDraw> _textureDrawPass;
 		CameraSettings _camera;
 	};
 }

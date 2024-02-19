@@ -2,13 +2,18 @@
 
 #include <string>
 #include <glm/glm.hpp>
+
 #include "Texture.h"
 
 using namespace std;
 
+namespace EngineRender::Shaders
+{
+    struct ShaderProgram;
+}
+
 namespace EngineRender
 {
-    class ShaderProgram;
     class ParameterBuilder;
 
     struct ShaderData
@@ -19,7 +24,7 @@ namespace EngineRender
     class ParameterBuilder
     {
     public:
-        ParameterBuilder(const ShaderProgram* program);
+        ParameterBuilder(const Shaders::ShaderProgram* program);
 
         void AddParameter(string name, float x);
         void AddParameter(string name, float x, float y);
@@ -43,10 +48,10 @@ namespace EngineRender
         void AddParameter(string name, const glm::mat2& x);
         void AddParameter(const ShaderData& data);
 
-        void AddTexture(string name, Texture& texture);
+        void AddTexture(string name, const Texture& texture);
 
     private:
-        const ShaderProgram* _program;
+        const Shaders::ShaderProgram* _program;
         int _textureCounter;
     };
 }

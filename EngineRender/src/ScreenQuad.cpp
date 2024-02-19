@@ -3,8 +3,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "ShaderProgram.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -12,13 +10,6 @@
 
 namespace EngineRender
 {
-    static ShaderProgram InitProgram() 
-    {
-        Shader vs = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadVertex.vert"), Vertex };
-        Shader ps = { EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadPixel.frag"), Pixel };
-        return ShaderProgram(vs, ps);
-    }
-
     static Texture InitTexture()
     {
         return Texture(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/wall.png"));
@@ -29,7 +20,13 @@ namespace EngineRender
         return Texture(EngineLibrary::FileSystem::EngineContent::GetPath("Textures/awesomeface.png"), true);
     }
 
-    ScreenQuad::ScreenQuad() : _program(InitProgram()), _simpleTex(InitTexture()), _emojiTex(InitTextureEmoji())  { }
+    ScreenQuad::ScreenQuad(Shaders::ShaderManager& manager) :
+        _program(manager.Compile(
+            EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadVertex.vert"), 
+            EngineLibrary::FileSystem::EngineContent::GetPath("Shaders/ScreenQuadPixel.frag")
+        )),
+        _simpleTex(InitTexture()), 
+        _emojiTex(InitTextureEmoji())  { }
 
     ScreenQuad::~ScreenQuad()
     {
@@ -39,8 +36,6 @@ namespace EngineRender
     {
         _simpleTex.Load();
         _emojiTex.Load();
-
-        _program.Compile();
 
         float vertices[] = {
             // positions          // colors           // texture coords

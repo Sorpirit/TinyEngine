@@ -69,10 +69,16 @@ namespace EngineRender
 
         // Render configuration
         // --------------------
-        //Basics.Init();
-        _lightDrawPass.Init();
-        _debugDrawPass.Init(_lightDrawPass);
-        _textureDrawPass.Init(_lightDrawPass);
+        
+        _shaderManager = std::make_unique<EngineRender::Shaders::ShaderManager>();
+
+        _testingQuad = std::make_unique<ScreenQuad>(*_shaderManager);
+        _lightDrawPass = std::make_unique<LightDraw>(*_shaderManager);
+        _debugDrawPass = std::make_unique<DebugDraw>(*_shaderManager);
+        _textureDrawPass = std::make_unique<TextureDraw>(*_shaderManager);
+
+        _debugDrawPass->Init(*_lightDrawPass);
+        _textureDrawPass->Init(*_lightDrawPass);
         
         const auto view = glm::lookAt(glm::vec3(0, 0, -5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         const auto projection = glm::perspective(glm::radians(90.0f), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), .05f, 100.0f);
@@ -90,9 +96,9 @@ namespace EngineRender
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        _lightDrawPass.Draw(frameInfo, _camera);
-        _debugDrawPass.Draw(_camera);
-        _textureDrawPass.Draw(frameInfo, _camera);
+        _lightDrawPass->Draw(frameInfo, _camera);
+        _debugDrawPass->Draw(_camera);
+        _textureDrawPass->Draw(frameInfo, _camera);
  
         glfwSwapBuffers(GLWindow);
     }

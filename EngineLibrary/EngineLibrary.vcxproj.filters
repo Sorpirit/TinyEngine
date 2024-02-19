@@ -15,15 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EngineFileSystem\EngineFileSystem.cpp">
+    <ClCompile Include="src\FileSystem\EngineContent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HashingHelper.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\EngineFileSystem\EngineFileSystem.h">
+    <ClInclude Include="src\FileSystem\EngineContent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EngineFileSystem\RootHandle.h">
+    <ClInclude Include="src\FileSystem\RootHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FrameInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "ShaderProgram.h"
+
+#include "Shaders/ShaderProgram.h"
+#include "Shaders/ShaderManager.h"
 #include "Texture.h"
 
 namespace EngineRender
@@ -8,7 +10,7 @@ namespace EngineRender
     class ScreenQuad
     {
     public:
-        ScreenQuad();
+        ScreenQuad(Shaders::ShaderManager& manager);
         ~ScreenQuad();
 
         void Init();
@@ -19,7 +21,7 @@ namespace EngineRender
         unsigned int _VAO;
         unsigned int _EBO;
 
-        ShaderProgram _program;
+        Shaders::ShaderProgram _program;
         Texture _simpleTex;
         Texture _emojiTex;
     };

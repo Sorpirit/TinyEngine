@@ -4,7 +4,10 @@
 
 #include "Mesh/Mesh.h"
 #include "Materials/MaterialSettings.h"
-#include "ShaderProgram.h"
+
+#include "Shaders/ShaderProgram.h"
+#include "Shaders/ShaderManager.h"
+
 #include "CameraSettings.h"
 #include "Mesh/ModelBuilder.h"
 #include "VertexStream/ColoredVertexStream.h"
@@ -15,7 +18,7 @@ namespace EngineRender
     class DebugDraw
     {
     public:
-        DebugDraw();
+        DebugDraw(Shaders::ShaderManager& manager);
         ~DebugDraw();
         void Init(const LightDraw& light);
         void Draw(const CameraSettings& camera);
@@ -24,7 +27,7 @@ namespace EngineRender
         Mesh::ModelBuilder<VertexStream::ColoredVertex>* AllocateLocal(int prealocateVertecies = 0) const;
 	
     private:
-        ShaderProgram _program;
+        Shaders::ShaderProgram _program;
         Materials::MaterialSettings _material;
 
         std::unique_ptr<Mesh::ModelBuilder<VertexStream::ColoredVertex>> _globalDebugDraw;
